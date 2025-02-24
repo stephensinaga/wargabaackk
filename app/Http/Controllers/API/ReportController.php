@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Report;
+use App\Models\City;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 
@@ -60,8 +61,8 @@ class ReportController extends Controller
             'photo_2' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'photo_3' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'keterangan' => 'required|string',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
+            'kota' => 'required|string',
+            'kecamatan' => 'required|string',
             'alamat' => 'required|string',
         ]);
 
@@ -86,8 +87,8 @@ class ReportController extends Controller
                 'photo_2' => $photo2Path,
                 'photo_3' => $photo3Path,
                 'description' => $request->keterangan,
-                'latitude' => $request->latitude,
-                'longitude' => $request->longitude,
+                'kota' => $request->kota,
+                'kecamatan' => $request->kecamatan,
                 'address' => $request->alamat,
                 'status' => 'pending',
             ]);
@@ -142,5 +143,15 @@ class ReportController extends Controller
 
         $report->delete();
         return response()->json(['success' => true, 'message' => 'Laporan berhasil dihapus']);
+    }
+
+    public function getCities()
+    {
+        try {
+            $cities = City::with('districts')->get(); // ✅ Pastikan districts ikut dimuat
+            return response()->json($cities);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

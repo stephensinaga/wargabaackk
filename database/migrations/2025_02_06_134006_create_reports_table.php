@@ -21,8 +21,8 @@ class CreateReportsTable extends Migration
             $table->string('photo_2');
             $table->string('photo_3');
             $table->text('description'); // Keterangan
-            $table->string('latitude'); // Lokasi
-            $table->string('longitude');
+            $table->string('kota'); // Lokasi
+            $table->string('kecamatan');
             $table->string('address');
             $table->enum('status', ['pending', 'in_progress', 'accepted', 'rejected'])->default('pending');
             $table->timestamps();

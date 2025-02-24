@@ -11,7 +11,7 @@ Route::post('/register', [AuthController::class, 'registerApi']);
 Route::post('/login', [AuthController::class, 'loginApi']);
 
 Route::middleware('auth:sanctum')->get('/reports/user', [ReportController::class, 'userReports']);
-
+Route::get('/cities', [ReportController::class, 'getCities']);
 
  // Buat laporan baru
 Route::put('/reports/{id}/status', [ReportController::class, 'updateStatus']); // Update status laporan

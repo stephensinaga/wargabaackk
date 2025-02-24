@@ -16,8 +16,8 @@ class Report extends Model
         'photo_2',
         'photo_3',
         'description',
-        'latitude',
-        'longitude',
+        'kota',
+        'kecamatan',
         'address',
         'status',
     ];

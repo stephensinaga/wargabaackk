@@ -24,7 +24,7 @@ class CreateReportsTable extends Migration
             $table->string('kota'); // Lokasi
             $table->string('kecamatan');
             $table->string('address');
-            $table->enum('status', ['pending', 'in_progress', 'accepted', 'rejected'])->default('pending');
+            $table->enum('status', ['pending', 'in_progress', 'accepted', 'rejected', 'completed'])->default('pending');
             $table->timestamps();
         });
     }

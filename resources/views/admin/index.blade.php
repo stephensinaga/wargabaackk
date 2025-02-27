@@ -20,20 +20,53 @@
             <td>{{ $report->description }}</td>
             <td>{{ ucfirst($report->status) }}</td>
             <td>
-                <form action="{{ route('admin.reports.verify', $report->id) }}" method="POST" style="display:inline;">
-                    @csrf
-                    <input type="hidden" name="status" value="accepted">
-                    <button type="submit" class="btn btn-success btn-sm">Terima</button>
-                </form>
+                <!-- Tombol Terima -->
+                <button type="button" class="btn btn-success btn-sm open-modal" data-bs-toggle="modal" data-bs-target="#assignModal-{{ $report->id }}">
+                    Terima
+                </button>
+
+                <!-- Tombol Tolak -->
                 <form action="{{ route('admin.reports.verify', $report->id) }}" method="POST" style="display:inline;">
                     @csrf
                     <input type="hidden" name="status" value="rejected">
                     <button type="submit" class="btn btn-danger btn-sm">Tolak</button>
                 </form>
-                <a href="{{ route('admin.reports.assignForm', $report->id) }}" class="btn btn-primary btn-sm">Tugaskan</a>
             </td>
         </tr>
         @endforeach
     </tbody>
 </table>
+
+<!-- Modals -->
+@foreach ($reports as $report)
+<div class="modal fade" id="assignModal-{{ $report->id }}" tabindex="-1" aria-labelledby="assignModalLabel-{{ $report->id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tugaskan Laporan #{{ $report->id }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('admin.reports.assign', $report->id) }}" method="POST">
+                @csrf
+                <input type="hidden" name="status" value="accepted"> <!-- Pastikan laporan diterima -->
+
+                <div class="modal-body">
+                    <label>Pilih Petugas:</label>
+                    <select name="officer_id" class="form-control" required>
+                        @foreach ($officers as $officer)
+                        <option value="{{ $officer->id }}">{{ $officer->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Tugaskan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endforeach
+
 @endsection

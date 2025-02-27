@@ -118,15 +118,13 @@ class AuthController extends Controller
             return back()->withErrors(['error' => 'Akses ditolak']);
         }
 
-
-        return redirect()->route('Dashboard');
+        return redirect()->route('Dashboard'); // ✅ Pastikan route-nya benar
     }
-
-    // Web: Logout Admin
-    public function logoutWeb()
+    public function logout(Request $request)
     {
         Auth::logout();
-        return redirect()->route('/');
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/login')->with('success', 'Logout berhasil!');
     }
-
 }

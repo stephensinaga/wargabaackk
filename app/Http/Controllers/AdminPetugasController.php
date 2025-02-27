@@ -65,11 +65,6 @@ class AdminPetugasController extends Controller
         ]);
 
         return redirect()->route('admin.petugas.index')->with('success', 'Petugas berhasil diperbarui!');
-    }
-
-    // Menghapus petugas
-    public function destroy($id)
-    {
         $petugas = User::findOrFail($id);
         $petugas->delete();
 

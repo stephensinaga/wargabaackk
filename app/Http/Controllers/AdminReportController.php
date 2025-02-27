@@ -11,17 +11,26 @@ class AdminReportController extends Controller
 {
     public function index() {
         $reports = Report::where('status', 'pending')->get();
-        return view('admin.index', compact('reports'));
+        $officers = User::where('role', 'petugas')->get(); // Ambil semua petugas
+        return view('admin.index', compact('reports', 'officers'));
     }
 
     // Menerima atau menolak laporan
-    public function verify(Request $request, $id) {
+    public function verify(Request $request, $id)
+    {
         $report = Report::findOrFail($id);
-        $report->status = $request->status; // accepted atau rejected
-        $report->save();
 
-        return redirect()->route('admin.reports.index')->with('success', 'Laporan diperbarui!');
+        if ($request->status == 'accepted') {
+            // Tampilkan modal pemilihan petugas
+            return redirect()->route('admin.reports.assignForm', $id);
+        } else {
+            // Jika ditolak, langsung update status
+            $report->status = 'rejected';
+            $report->save();
+            return redirect()->route('admin.reports.index')->with('success', 'Laporan ditolak!');
+        }
     }
+
 
     // Menampilkan halaman untuk assign petugas
     public function assignForm($id) {
@@ -41,7 +50,7 @@ class AdminReportController extends Controller
         ]);
 
         $report = Report::findOrFail($id);
-        $report->status = 'in_progress';
+        $report->status = 'accepted';
         $report->save();
 
         return redirect()->route('admin.reports.index')->with('success', 'Laporan diteruskan ke petugas!');

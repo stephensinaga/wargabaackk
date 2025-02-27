@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Report;
 use App\Models\City;
+use App\Models\ReportStatusHistory;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 
@@ -154,4 +155,19 @@ class ReportController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+    public function getReportHistory($id)
+    {
+        $history = ReportStatusHistory::where('report_id', $id)
+            ->with('user') 
+            ->orderBy('created_at', 'asc')
+            ->get();
+    
+        Log::info('Report History Data:', $history->toArray()); // ✅ Tambahkan log
+    
+        return response()->json(['success' => true, 'data' => $history]);
+    }
+    
+
+    
 }

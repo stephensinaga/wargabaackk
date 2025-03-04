@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Models\User;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Hash; // Tambahkan ini
 
 class AdminPetugasController extends Controller
 {
@@ -34,8 +33,8 @@ class AdminPetugasController extends Controller
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => $request->password,
-            'role' => 'petugas', // Set peran sebagai petugas
+            'password' => Hash::make($request->password), // Gunakan Hash::make
+            'role' => 'petugas',
         ]);
 
         return redirect()->route('admin.petugas.index')->with('success', 'Petugas berhasil ditambahkan!');
@@ -58,13 +57,20 @@ class AdminPetugasController extends Controller
         ]);
 
         $petugas = User::findOrFail($id);
-        $petugas->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => $request->password,
-        ]);
+        $petugas->name = $request->name;
+        $petugas->email = $request->email;
+
+        // Jika password diisi, update password dengan hashing
+        if ($request->filled('password')) {
+            $petugas->password = Hash::make($request->password);
+        }
+
+        $petugas->save();
 
         return redirect()->route('admin.petugas.index')->with('success', 'Petugas berhasil diperbarui!');
+    }
+    public function destroy($id)
+    {
         $petugas = User::findOrFail($id);
         $petugas->delete();
 

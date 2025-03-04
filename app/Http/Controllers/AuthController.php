@@ -118,7 +118,8 @@ class AuthController extends Controller
             return back()->withErrors(['error' => 'Akses ditolak']);
         }
 
-        return redirect()->route('Dashboard'); // ✅ Pastikan route-nya benar
+        return redirect()->route('dashboard'); // ✅ Gunakan nama yang benar
+
     }
     public function logout(Request $request)
     {

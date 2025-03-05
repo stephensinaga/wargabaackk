@@ -3,6 +3,34 @@
 @section('title', 'Dashboard')
 
 @section('contents')
+    <style>
+        .card {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .badge-info {
+            background-color: #17a2b8;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .list-group-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 400px !important;
+        }
+    </style>
+
     <div class="row">
         <!-- Total Laporan Masuk -->
         <div class="col-xl-4 col-md-6 mb-4">

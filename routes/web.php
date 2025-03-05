@@ -5,6 +5,12 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminReportController;
 use App\Http\Controllers\AdminPetugasController;
+use App\Http\Controllers\SuperAdminController;
+use App\Http\Controllers\SuperAdminReportController;
+use App\Http\Controllers\DashboardController;
+use App\Models\User;
+use App\Models\Report;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +22,30 @@ use App\Http\Controllers\AdminPetugasController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', function () {
+        $total_users = User::count();
+        $total_reports = Report::count();
+        $total_admins = User::where('role', 'admin')->count();
+        $pending_requests = Report::where('status', 'pending')->count();
+
+        return view('dashboard', compact('total_users', 'total_reports', 'total_admins', 'pending_requests'));
+    })->name('dashboard');
+});
+
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard'); // ✅ Pastikan nama route benar
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', function () {
+        $user = auth()->user();
+        return view('dashboard', compact('user'));
+    })->name('dashboard');
+});
 
 Route::controller(AuthController::class)->group(function () {
     Route::get('', 'loginview')->name('login.view');
@@ -40,6 +70,21 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/petugas/{id}', [AdminPetugasController::class, 'update'])->name('admin.petugas.update');
         Route::delete('/petugas/{id}', [AdminPetugasController::class, 'destroy'])->name('admin.petugas.destroy');
     });
+});
 
-    });
+Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->group(function () {
+    Route::get('/dashboard', [SuperAdminController::class, 'dashboard'])->name('superadmin.dashboard');
 
+    // Kelola Admin
+    Route::get('/admin', [SuperAdminController::class, 'index'])->name('superadmin.admin.index');
+    Route::get('/admin/create', [SuperAdminController::class, 'create'])->name('superadmin.admin.create');
+    Route::post('/admin/store', [SuperAdminController::class, 'store'])->name('superadmin.admin.store');
+    Route::get('/admin/{id}/edit', [SuperAdminController::class, 'edit'])->name('superadmin.admin.edit');
+    Route::put('/admin/{id}', [SuperAdminController::class, 'update'])->name('superadmin.admin.update');
+    Route::delete('/admin/{id}', [SuperAdminController::class, 'destroy'])->name('superadmin.admin.destroy');
+
+    // Laporan Pengaduan
+    Route::get('/reports', [SuperAdminReportController::class, 'index'])->name('superadmin.reports.index');
+});
+
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');

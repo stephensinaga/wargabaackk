@@ -118,7 +118,8 @@ class AuthController extends Controller
             return back()->withErrors(['error' => 'Akses ditolak']);
         }
 
-        return redirect()->route('Dashboard'); // ✅ Pastikan route-nya benar
+        return redirect()->route('dashboard'); // ✅ Gunakan nama yang benar
+
     }
     public function logout(Request $request)
     {
@@ -126,5 +127,14 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('/login')->with('success', 'Logout berhasil!');
+    }
+    public function logoutWeb(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login.view')->with('success', 'Anda berhasil logout.');
     }
 }
